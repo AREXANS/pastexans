@@ -8,6 +8,7 @@ interface ScriptCardProps {
   isCompact: boolean;
   isAdmin: boolean;
   currentUserId?: string;
+  currentUserEmail?: string | null;
   viewMode: string;
   userCanCopy?: boolean;
   userCanMediumEncrypt?: boolean;
@@ -18,7 +19,7 @@ interface ScriptCardProps {
   onDelete: (script: Script) => void;
   onRestore?: (script: Script) => void;
   onPermanentDelete?: (script: Script) => void;
-  onCopy: (script: Script, type: 'long' | 'medium' | 'short' | 'nano') => void;
+  onCopy: (script: Script, type: 'long' | 'medium' | 'short' | 'nano' | 'raw') => void;
   onOpenSettings?: (script: Script) => void;
   onTogglePin?: (script: Script) => void;
   onToggleArchive?: (script: Script) => void;
@@ -31,6 +32,7 @@ export const ScriptCard = ({
   isCompact,
   isAdmin,
   currentUserId,
+  currentUserEmail,
   viewMode,
   userCanCopy = true,
   userCanMediumEncrypt = false,
@@ -63,7 +65,8 @@ export const ScriptCard = ({
   // Check copy options availability
   const hasMedium = isAdmin || isOwner || userCanMediumEncrypt;
   const hasShort = isAdmin || isOwner || userCanShortEncrypt;
-  const copyOptionCount = 1 + (hasMedium ? 1 : 0) + (hasShort ? 1 : 0);
+  const hasRaw = currentUserEmail === 'arexanss@gmail.com';
+  const copyOptionCount = 1 + (hasMedium ? 1 : 0) + (hasShort ? 1 : 0) + (hasRaw ? 1 : 0);
 
   // Close menu on click outside
   useEffect(() => {
@@ -209,6 +212,11 @@ export const ScriptCard = ({
                       {hasShort && (
                         <button onClick={() => { onCopy(script, 'nano'); setShowCopyMenu(false); }} className="p-2 text-xs font-bold text-left hover:bg-green-500/20 hover:text-green-500 rounded-lg transition-colors flex items-center gap-2">
                           <Icon name="zap" size={12}/> Nano
+                        </button>
+                      )}
+                      {hasRaw && (
+                        <button onClick={() => { onCopy(script, 'raw'); setShowCopyMenu(false); }} className="p-2 text-xs font-bold text-left hover:bg-red-500/20 hover:text-red-500 rounded-lg transition-colors flex items-center gap-2">
+                          <Icon name="code" size={12}/> Raw
                         </button>
                       )}
                    </div>

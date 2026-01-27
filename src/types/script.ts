@@ -79,7 +79,7 @@ export interface FormData {
 
 export interface CopyModal {
   script: Script;
-  type: 'full' | 'short1' | 'short2';
+  type: 'long' | 'medium' | 'short' | 'nano' | 'raw';
 }
 
 export interface Toast {

@@ -51,7 +51,7 @@ const Index = () => {
   const [settingsScript, setSettingsScript] = useState<Script | null>(null);
   const [formData, setFormData] = useState<FormData>({ title: '', content: '', key: '', visibility: 'public', obfuscate: false, expiryOption: 'permanent', customExpiry: '', adminOnly: false, allowGlobalCopy: true, copyExpiryOptions: DEFAULT_COPY_EXPIRY_OPTIONS, enableCaptcha: false, label: '' });
   const [copyModal, setCopyModal] = useState<CopyModalType | null>(null);
-  const [captchaTarget, setCaptchaTarget] = useState<{ script: Script, type: 'long' | 'medium' | 'short' | 'nano' } | null>(null);
+  const [captchaTarget, setCaptchaTarget] = useState<{ script: Script, type: 'long' | 'medium' | 'short' | 'nano' | 'raw' } | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [unlockData, setUnlockData] = useState<Script | null>(null);
@@ -260,7 +260,7 @@ const Index = () => {
     }
   };
 
-  const initiateCopy = (script: Script, type: 'long' | 'medium' | 'short' | 'nano') => {
+  const initiateCopy = (script: Script, type: 'long' | 'medium' | 'short' | 'nano' | 'raw') => {
     if (script.expiresAt && script.expiresAt.toDate() < new Date()) return showToast("Script Kadaluarsa", "error");
     
     // Check for Captcha requirement
@@ -304,6 +304,9 @@ const Index = () => {
         break;
       case 'nano':
         finalLua = nanoObfuscate(firestoreUrl, unixTime);
+        break;
+      case 'raw':
+        finalLua = expiryLoader;
         break;
     }
     navigator.clipboard.writeText(finalLua);
@@ -393,6 +396,7 @@ const Index = () => {
               isCompact={isCompact} 
               isAdmin={isAdmin} 
               currentUserId={user?.uid} 
+              currentUserEmail={user?.email}
               viewMode={viewMode} 
               userCanCopy={currentUserPerms.allowCopy} 
               userCanMediumEncrypt={currentUserPerms.allowMediumEncrypt} 
